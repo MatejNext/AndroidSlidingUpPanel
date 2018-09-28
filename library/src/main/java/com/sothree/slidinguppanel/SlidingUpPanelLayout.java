@@ -25,7 +25,6 @@ import com.sothree.slidinguppanel.library.R;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import androidx.core.view.MotionEventCompat;
 import androidx.core.view.ViewCompat;
 
 public class SlidingUpPanelLayout extends ViewGroup {
@@ -421,7 +420,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
         if (getPanelState() == PanelState.COLLAPSED) {
             smoothToBottom();
             invalidate();
-            return;
         }
     }
 
@@ -888,7 +886,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
             return false;
         }
 
-        final int action = MotionEventCompat.getActionMasked(ev);
+        final int action = ev.getActionMasked();
         final float x = ev.getX();
         final float y = ev.getY();
         final float adx = Math.abs(x - mInitialMotionX);
@@ -956,7 +954,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        final int action = MotionEventCompat.getActionMasked(ev);
+        final int action = ev.getActionMasked();
 
         if (!isEnabled() || !isTouchEnabled() || (mIsUnableToDrag && action != MotionEvent.ACTION_DOWN)) {
             mDragHelper.abort();
@@ -1151,7 +1149,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private void applyParallaxForCurrentSlideOffset() {
         if (mParallaxOffset > 0) {
             int mainViewOffset = getCurrentParallaxOffset();
-            ViewCompat.setTranslationY(mMainView, mainViewOffset);
+            mMainView.setTranslationY(mainViewOffset);
         }
     }
 
@@ -1305,7 +1303,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 }
             }
         }
-        return checkV && ViewCompat.canScrollHorizontally(v, -dx);
+        return checkV && v.canScrollHorizontally(-dx);
     }
 
 
@@ -1392,7 +1390,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         @Override
         public void onViewReleased(View releasedChild, float xvel, float yvel) {
-            int target = 0;
+            int target;
 
             // direction is always positive if we are sliding in the expanded direction
             float direction = mIsSlidingUp ? -yvel : yvel;
